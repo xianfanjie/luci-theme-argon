@@ -94,8 +94,23 @@
 		return bgUrl, backgroundType, mimeType
 	end
 
+	local function matches_any(str, patterns)
+    		for _, pattern in ipairs(patterns) do
+        		if str:find(pattern) then
+            			return true
+        		end
+    		end
+    		return false
+	end
+
+	local user_agent = (luci.http.getenv("HTTP_USER_AGENT") or "unknown"):lower()
+	local mobile_patterns = { "mobile", "android", "iphone", "ipad", "phone" }
+	local background_path 	= "/background/desktop_pic/"
+	if matches_any(user_agent, mobile_patterns) then
+		background_path = "/background/mobile_pic/"
+	end
 	local boardinfo			= util.ubus("system", "board")
-	local themeDir			= media .. "/background/"
+	local themeDir			= media .. background_path
 	local bgUrl, backgroundType, mimeType = selectBackground(themeDir)
 %>
 <!-- Login Page Start -->
